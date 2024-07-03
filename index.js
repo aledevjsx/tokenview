@@ -20,7 +20,7 @@ app.use(cors());
 
 app.get('/empresas', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM miransdata_licencia');
+        const result = await pool.query('SELECT * FROM miransdata_licencia order by razonsocial asc');
         res.json(result.rows);
     } catch (err) {
         console.error(err);
