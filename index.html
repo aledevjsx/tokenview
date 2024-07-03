@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administrar Empresas</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="mb-4">Administrar Empresas</h1>
+      <div class="form-group">
+        <label for="empresaSelect">Selecciona una empresa:</label>
+        <select id="empresaSelect" class="form-control">
+          <option value="">Selecciona una empresa</option>
+        </select>
+      </div>
+      <div id="empresaDatos" class="mt-4" style="display: none">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="licencia" />
+          <label class="form-check-label" for="licencia">Licencia</label>
+        </div>
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="facturacion" />
+          <label class="form-check-label" for="facturacion">Facturación</label>
+        </div>
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="servicio" />
+          <label class="form-check-label" for="servicio">Servicio</label>
+        </div>
+        <div class="form-group mt-3">
+          <label for="mensaje">Mensaje:</label>
+          <input type="text" class="form-control" id="mensaje" />
+        </div>
+        <button id="guardar" class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const empresaSelect = document.getElementById("empresaSelect");
+        const empresaDatos = document.getElementById("empresaDatos");
+        const licencia = document.getElementById("licencia");
+        const facturacion = document.getElementById("facturacion");
+        const servicio = document.getElementById("servicio");
+        const mensaje = document.getElementById("mensaje");
+        const guardar = document.getElementById("guardar");
+
+        // Obtener la lista de empresas
+        const response = await fetch("http://localhost:3000/empresas");
+        const empresas = await response.json();
+        empresas.forEach((empresa) => {
+          const option = document.createElement("option");
+          option.value = empresa.ruc;
+          option.textContent = empresa.razonsocial;
+          empresaSelect.appendChild(option);
+        });
+
+        // Manejar la selección de empresa
+        empresaSelect.addEventListener("change", async () => {
+          const id = empresaSelect.value;
+          if (id) {
+            const response = await fetch(`http://localhost:3000/empresa/${id}`);
+            const empresa = await response.json();
+            licencia.checked = empresa.licencia;
+            facturacion.checked = empresa.facturacion;
+            servicio.checked = empresa.servicio;
+            mensaje.value = empresa.mensaje;
+            empresaDatos.style.display = "block";
+          } else {
+            empresaDatos.style.display = "none";
+          }
+        });
+
+        // Guardar los cambios
+        guardar.addEventListener("click", async () => {
+          const id = empresaSelect.value;
+          const data = {
+            licencia: licencia.checked,
+            facturacion: facturacion.checked,
+            servicio: servicio.checked,
+            mensaje: mensaje.value,
+          };
+          await fetch(`http://localhost:3000/empresa/${id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+          alert("Empresa actualizada");
+        });
+      });
+    </script>
+  </body>
+</html>
