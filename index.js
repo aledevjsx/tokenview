@@ -46,11 +46,11 @@ app.put('/empresa/:id', async (req, res) => {
         const licenciaInt = licencia ? 1 : 0;
         const facturacionInt = facturacion ? 1 : 0;
         const servicioInt = servicio ? 1 : 0;
-        console.log(licenciaInt, facturacionInt, servicioInt, mensaje, id);
         await pool.query(
             'UPDATE miransdata_licencia SET licencia = $1, facturacion = $2, servicio = $3, mensaje = $4 WHERE ruc = $5',
             [licenciaInt, facturacionInt, servicioInt, mensaje, id]
         );
+        console.log(`La empresa ${id} ha sido actualizada con los valores ${licenciaInt}, ${facturacionInt}, ${servicioInt}, ${mensaje}`);
         res.send('Empresa actualizada');
     } catch (err) {
         console.error(err);
