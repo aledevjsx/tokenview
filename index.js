@@ -32,7 +32,7 @@ app.get('/empresa/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const result = await pool.query('SELECT licencia,facturacion,servicio,mensaje FROM miransdata_licencia WHERE ruc = $1', [id]);
-        res.json(result.rows[0]);
+        res.json(result.rows);
     } catch (err) {
         console.error(err);
         res.status(500).send('Error al obtener empresa');
